@@ -9,6 +9,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- html2canvas library for export functionality -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #1a365d;
@@ -57,7 +59,7 @@
 
         .mobile-nav {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 5px;
         }
 
@@ -358,6 +360,17 @@
             box-shadow: 0 4px 6px rgba(237, 137, 54, 0.4);
         }
 
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #63b3ed);
+            color: white;
+            box-shadow: 0 2px 4px rgba(66, 153, 225, 0.3);
+        }
+
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(66, 153, 225, 0.4);
+        }
+
         .btn-sm {
             padding: 6px 12px;
             font-size: 0.85rem;
@@ -421,6 +434,50 @@
 
         tr:hover {
             background-color: #f8fafc;
+        }
+
+        /* Day Works Table Styles */
+        .day-works-table th,
+        .day-works-table td {
+            padding: 8px 10px;
+            font-size: 0.9rem;
+        }
+
+        .day-works-table .editable {
+            background-color: #fffde7;
+            padding: 4px 6px !important;
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+        }
+
+        .day-works-table .editable:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
+        }
+
+        .day-works-table .total-cell {
+            background-color: #e8f5e9;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .day-works-table .total-cell:hover {
+            background-color: #d4edda;
+        }
+
+        .day-works-table .totals-row {
+            background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
+            color: white;
+            font-weight: bold;
+        }
+
+        .day-works-table .day-of-week {
+            font-size: 0.8rem;
+            color: var(--dark);
+            display: block;
         }
 
         /* Forms */
@@ -529,10 +586,8 @@
             border-radius: 12px;
             position: relative;
             overflow: hidden;
-            /* Center text horizontally and vertically */
             text-align: center;
             line-height: 50px;
-            /* Same as height for vertical centering */
         }
 
         .day-cell:hover {
@@ -540,7 +595,6 @@
             border-color: var(--secondary);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             z-index: 1;
-            /* Ensure it appears above other cells */
         }
 
         .day-cell::before {
@@ -710,6 +764,40 @@
         .role-count {
             font-size: 0.9rem;
             opacity: 0.9;
+        }
+
+        /* Sub-tabs */
+        .sub-tabs {
+            display: flex;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .sub-tab {
+            padding: 10px 20px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+        }
+
+        .sub-tab:hover {
+            color: var(--secondary);
+        }
+
+        .sub-tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .sub-tab-content {
+            display: none;
+        }
+
+        .sub-tab-content.active {
+            display: block;
         }
 
         /* Modals */
@@ -974,7 +1062,6 @@
             padding: 15px;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             border-left: 5px solid var(--accent);
         }
 
@@ -995,6 +1082,53 @@
         .invoice-company i {
             color: var(--accent);
             width: 20px;
+        }
+
+        /* Rate Table Styles */
+        .rates-table .editable-rate {
+            background-color: #e8f5e9;
+            padding: 4px 6px !important;
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+        }
+
+        .rates-table .editable-rate:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
+        }
+
+        /* Payment Status */
+        .payment-status-select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 2px solid var(--border);
+            font-weight: 600;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-status-select:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .payment-paid {
+            background-color: #f0fff4;
+            color: #22543d;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        /* Worker Actions in Attendance */
+        .worker-action-cell {
+            position: sticky;
+            left: 150px;
+            z-index: 2;
+            background: white;
+            border-right: 2px solid var(--border);
         }
 
         /* Responsive */
@@ -1075,6 +1209,10 @@
                 width: 100%;
                 margin: 10px;
             }
+
+            .mobile-nav {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
 
         @media (min-width: 769px) {
@@ -1152,22 +1290,6 @@
         .save-attendance-btn i {
             font-size: 1.5rem;
         }
-
-        /* Loan Edit Status */
-        .loan-status-select {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 2px solid var(--border);
-            font-weight: 600;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .loan-status-select:focus {
-            outline: none;
-            border-color: var(--secondary);
-        }
     </style>
 </head>
 
@@ -1190,8 +1312,14 @@
             <a href="#" class="mobile-nav-item" onclick="switchTab('attendance')">
                 <i class="fas fa-clipboard-check"></i> Attendance
             </a>
+            <a href="#" class="mobile-nav-item" onclick="switchTab('dayworks')">
+                <i class="fas fa-calculator"></i> Day Works
+            </a>
             <a href="#" class="mobile-nav-item" onclick="switchTab('payroll')">
                 <i class="fas fa-money-check-alt"></i> Payroll
+            </a>
+            <a href="#" class="mobile-nav-item" onclick="switchTab('payroll-payments')">
+                <i class="fas fa-credit-card"></i> Payroll Payments
             </a>
             <a href="#" class="mobile-nav-item" onclick="switchTab('loans')">
                 <i class="fas fa-hand-holding-usd"></i> Loans/Credit
@@ -1223,25 +1351,13 @@
                 <i class="fas fa-clipboard-check"></i>
                 <span>Attendance</span>
             </button>
+            <button class="mobile-nav-btn" onclick="switchMobileTab('dayworks')">
+                <i class="fas fa-calculator"></i>
+                <span>Day Works</span>
+            </button>
             <button class="mobile-nav-btn" onclick="switchMobileTab('payroll')">
                 <i class="fas fa-money-check-alt"></i>
                 <span>Payroll</span>
-            </button>
-            <button class="mobile-nav-btn" onclick="switchMobileTab('loans')">
-                <i class="fas fa-hand-holding-usd"></i>
-                <span>Loans</span>
-            </button>
-            <button class="mobile-nav-btn" onclick="switchMobileTab('sites')">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Sites</span>
-            </button>
-            <button class="mobile-nav-btn" onclick="switchMobileTab('expenses')">
-                <i class="fas fa-receipt"></i>
-                <span>Expenses</span>
-            </button>
-            <button class="mobile-nav-btn" onclick="switchMobileTab('invoices')">
-                <i class="fas fa-file-invoice"></i>
-                <span>Invoices</span>
             </button>
         </div>
     </div>
@@ -1251,6 +1367,12 @@
         <header class="header">
             <h1><i class="fas fa-hard-hat"></i> Tonnylays Construction</h1>
             <div class="header-controls">
+                <button class="btn btn-primary btn-sm" onclick="saveAllData()">
+                    <i class="fas fa-save"></i> Save All
+                </button>
+                <button class="btn btn-info btn-sm" onclick="refreshAllData()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
                 <button class="btn btn-primary btn-sm" onclick="backupData()">
                     <i class="fas fa-download"></i> Backup
                 </button>
@@ -1271,8 +1393,14 @@
             <div class="nav-tab" onclick="switchTab('attendance')">
                 <i class="fas fa-clipboard-check"></i> Attendance
             </div>
+            <div class="nav-tab" onclick="switchTab('dayworks')">
+                <i class="fas fa-calculator"></i> Day Works
+            </div>
             <div class="nav-tab" onclick="switchTab('payroll')">
                 <i class="fas fa-money-check-alt"></i> Payroll
+            </div>
+            <div class="nav-tab" onclick="switchTab('payroll-payments')">
+                <i class="fas fa-credit-card"></i> Payroll Payments
             </div>
             <div class="nav-tab" onclick="switchTab('loans')">
                 <i class="fas fa-hand-holding-usd"></i> Loans/Credit
@@ -1333,8 +1461,7 @@
 
             <div class="card">
                 <div class="card-header">Quick Actions</div>
-                <div
-                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 15px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 15px;">
                     <button class="btn btn-primary" onclick="switchTab('attendance')">
                         <i class="fas fa-clipboard-check"></i> Mark Attendance
                     </button>
@@ -1368,11 +1495,19 @@
                 </div>
             </div>
 
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="workerSearch" placeholder="Search workers by name, surname, role or ID..."
+                    onkeyup="filterWorkers()">
+            </div>
+
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Surname</th>
+                            <th>ID Number</th>
                             <th>Role</th>
                             <th>Daily Rate</th>
                             <th>Bank</th>
@@ -1437,6 +1572,7 @@
                     <thead>
                         <tr id="attendanceHeader">
                             <th class="worker-name-cell">Worker</th>
+                            <th class="worker-action-cell">Actions</th>
                             <!-- Dates will be populated here -->
                         </tr>
                     </thead>
@@ -1468,6 +1604,88 @@
             </div>
         </section>
 
+        <!-- Day Works Section -->
+        <section id="dayworks" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-calculator"></i> Day Works Calculator</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="showModal('ratesModal')">
+                        <i class="fas fa-cog"></i> Edit Rates
+                    </button>
+                    <button class="btn btn-success" onclick="exportDayWorksClientReport()">
+                        <i class="fas fa-file-export"></i> Client Report
+                    </button>
+                    <button class="btn btn-info" onclick="exportDayWorksFullReport()">
+                        <i class="fas fa-file-alt"></i> Full Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="attendance-controls">
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <label for="dayWorksSite">Site</label>
+                    <select id="dayWorksSite" onchange="loadDayWorksFromAttendance()">
+                        <option value="">Select Site</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <label for="dayWorksFortnight">Fortnight</label>
+                    <select id="dayWorksFortnight" onchange="loadDayWorksFromAttendance()">
+                        <option value="">Select Fortnight</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-success" onclick="calculateAllDayWorksTotals()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="day-works-table" id="dayWorksTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Bricklayer</th>
+                            <th>Labourers</th>
+                            <th>Foreman</th>
+                            <th>Transport</th>
+                            <th>Hours</th>
+                            <th>O/T Hours</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dayWorksBody">
+                        <!-- Day works data will be populated here -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="totals-row">
+                            <td colspan="2">TOTALS</td>
+                            <td id="total-bricklayer">0</td>
+                            <td id="total-labourers">0</td>
+                            <td id="total-foreman">0</td>
+                            <td id="total-transport">0</td>
+                            <td id="total-hours">0</td>
+                            <td id="total-overtime">0</td>
+                            <td id="grand-total">R0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Notes</div>
+                <div style="padding: 15px; font-size: 0.9rem;">
+                    <p><strong>Note:</strong> Overtime hours are entered manually. Monday-Thursday: 9 normal hours. Friday: 6 hours + 3.5 overtime. Weekend: all overtime.</p>
+                    <p><strong>Export:</strong> Client report shows only essential columns. Full report includes all data.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Payroll Section -->
         <section id="payroll" class="content-section">
             <div class="section-header">
@@ -1479,66 +1697,194 @@
                 </div>
             </div>
 
+            <div class="sub-tabs">
+                <div class="sub-tab active" onclick="switchSubTab('payroll', 'single')">Single Site</div>
+                <div class="sub-tab" onclick="switchSubTab('payroll', 'combined')">Combined Sites</div>
+            </div>
+
+            <div id="payroll-single" class="sub-tab-content active">
+                <div class="attendance-controls">
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="payrollSite">Site</label>
+                        <select id="payrollSite" onchange="loadPayroll()">
+                            <option value="">Select Site</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="payrollFortnight">Fortnight</label>
+                        <select id="payrollFortnight" onchange="loadPayroll()">
+                            <option value="">Select Fortnight</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-success" onclick="calculatePayroll()">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="payrollTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Days</th>
+                                <th>Rate</th>
+                                <th>Gross</th>
+                                <th>Loans</th>
+                                <th>Credit</th>
+                                <th>Net Pay</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payrollTableBody">
+                            <!-- Payroll will be populated here -->
+                        </tbody>
+                        <tfoot>
+                            <tr id="payrollTotalRow"
+                                style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;">
+                                <td colspan="4" style="text-align: right; font-weight: bold;">TOTAL:</td>
+                                <td id="totalGross">R0</td>
+                                <td id="totalLoans">R0</td>
+                                <td id="totalCredit">R0</td>
+                                <td id="totalNet" style="font-weight: bold;">R0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="exportPayrollPDF()">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                    <button class="btn btn-success" onclick="savePayroll()">
+                        <i class="fas fa-save"></i> Save Payroll
+                    </button>
+                </div>
+            </div>
+
+            <div id="payroll-combined" class="sub-tab-content">
+                <div class="attendance-controls">
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="combinedStartDate">Start Date</label>
+                        <input type="date" id="combinedStartDate" onchange="loadCombinedPayroll()">
+                    </div>
+
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label for="combinedEndDate">End Date</label>
+                        <input type="date" id="combinedEndDate" onchange="loadCombinedPayroll()">
+                    </div>
+
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-success" onclick="calculateCombinedPayroll()">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table id="combinedPayrollTable">
+                        <thead>
+                            <tr>
+                                <th>Worker</th>
+                                <th>Sites Worked</th>
+                                <th>Total Days</th>
+                                <th>Avg Rate</th>
+                                <th>Gross</th>
+                                <th>Loans</th>
+                                <th>Credit</th>
+                                <th>Net Pay</th>
+                            </tr>
+                        </thead>
+                        <tbody id="combinedPayrollTableBody">
+                            <!-- Combined payroll will be populated here -->
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;">
+                                <td colspan="4" style="text-align: right; font-weight: bold;">TOTAL:</td>
+                                <td id="combinedTotalGross">R0</td>
+                                <td id="combinedTotalLoans">R0</td>
+                                <td id="combinedTotalCredit">R0</td>
+                                <td id="combinedTotalNet" style="font-weight: bold;">R0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="exportCombinedPayrollPDF()">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payroll Payments Section -->
+        <section id="payroll-payments" class="content-section">
+            <div class="section-header">
+                <h2><i class="fas fa-credit-card"></i> Payroll Payments</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="markAllAsPaid()">
+                        <i class="fas fa-check-circle"></i> Mark All Paid
+                    </button>
+                    <button class="btn btn-primary" onclick="exportPaymentsPDF()">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
+            </div>
+
             <div class="attendance-controls">
                 <div class="form-group" style="flex: 1; min-width: 200px;">
-                    <label for="payrollSite">Site</label>
-                    <select id="payrollSite" onchange="loadPayroll()">
+                    <label for="paymentsSite">Site</label>
+                    <select id="paymentsSite" onchange="loadPayrollPayments()">
                         <option value="">Select Site</option>
                     </select>
                 </div>
 
                 <div class="form-group" style="flex: 1; min-width: 200px;">
-                    <label for="payrollFortnight">Fortnight</label>
-                    <select id="payrollFortnight" onchange="loadPayroll()">
+                    <label for="paymentsFortnight">Fortnight</label>
+                    <select id="paymentsFortnight" onchange="loadPayrollPayments()">
                         <option value="">Select Fortnight</option>
                     </select>
                 </div>
 
                 <div class="form-group" style="flex: 1; min-width: 200px;">
                     <label>&nbsp;</label>
-                    <button class="btn btn-success" onclick="calculatePayroll()">
-                        <i class="fas fa-calculator"></i> Calculate
+                    <button class="btn btn-info" onclick="loadPayrollPayments()">
+                        <i class="fas fa-sync-alt"></i> Refresh
                     </button>
                 </div>
             </div>
 
             <div class="table-container">
-                <table id="payrollTable">
+                <table id="paymentsTable">
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Role</th>
-                            <th>Days</th>
-                            <th>Rate</th>
-                            <th>Gross</th>
-                            <th>Loans</th>
-                            <th>Credit</th>
+                            <th>Account</th>
                             <th>Net Pay</th>
+                            <th>Payment Status</th>
+                            <th>Payment Date</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="payrollTableBody">
-                        <!-- Payroll will be populated here -->
+                    <tbody id="paymentsTableBody">
+                        <!-- Payments will be populated here -->
                     </tbody>
                     <tfoot>
-                        <tr id="payrollTotalRow"
-                            style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;">
-                            <td colspan="4" style="text-align: right; font-weight: bold;">TOTAL:</td>
-                            <td id="totalGross">R0</td>
-                            <td id="totalLoans">R0</td>
-                            <td id="totalCredit">R0</td>
-                            <td id="totalNet" style="font-weight: bold;">R0</td>
+                        <tr style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white;">
+                            <td colspan="3" style="text-align: right; font-weight: bold;">TOTAL:</td>
+                            <td id="paymentsTotalNet" style="font-weight: bold;">R0</td>
+                            <td id="paymentsStatusSummary"></td>
+                            <td colspan="2"></td>
                         </tr>
                     </tfoot>
                 </table>
-            </div>
-
-            <div style="text-align: right; margin-top: 15px;">
-                <button class="btn btn-primary" onclick="exportPayrollPDF()">
-                    <i class="fas fa-file-pdf"></i> Export PDF
-                </button>
-                <button class="btn btn-success" onclick="savePayroll()">
-                    <i class="fas fa-save"></i> Save Payroll
-                </button>
             </div>
         </section>
 
@@ -1559,7 +1905,7 @@
                 <div class="sub-tab" onclick="switchSubTab('loans', 'all')">All Transactions</div>
             </div>
 
-            <div id="loans-loans" class="sub-tab-content">
+            <div id="loans-loans" class="sub-tab-content active">
                 <div class="table-container">
                     <table>
                         <thead>
@@ -1579,7 +1925,7 @@
                 </div>
             </div>
 
-            <div id="loans-credit" class="sub-tab-content" style="display: none;">
+            <div id="loans-credit" class="sub-tab-content">
                 <div class="table-container">
                     <table>
                         <thead>
@@ -1599,7 +1945,7 @@
                 </div>
             </div>
 
-            <div id="loans-all" class="sub-tab-content" style="display: none;">
+            <div id="loans-all" class="sub-tab-content">
                 <div class="table-container">
                     <table>
                         <thead>
@@ -1893,10 +2239,6 @@
                             <option value="Supervisor">Supervisor</option>
                             <option value="Office Admin">Office Admin</option>
                             <option value="Technician">Technician</option>
-                            <option value="Electrician">Electrician</option>
-                            <option value="Plumber">Plumber</option>
-                            <option value="Carpenter">Carpenter</option>
-                            <option value="Painter">Painter</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1924,10 +2266,6 @@
                             <option value="Sasfin Bank">Sasfin Bank</option>
                             <option value="Grindrod Bank">Grindrod Bank</option>
                             <option value="Access Bank">Access Bank</option>
-                            <option value="Mercantile Bank">Mercantile Bank</option>
-                            <option value="HBZ Bank">HBZ Bank</option>
-                            <option value="Ubank">Ubank</option>
-                            <option value="Postbank">Postbank</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
@@ -1963,6 +2301,39 @@
             <div class="modal-footer">
                 <button class="btn btn-danger" onclick="hideModal('editWorkerModal')">Cancel</button>
                 <button class="btn btn-success" onclick="updateWorker()">Update Worker</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rates Modal -->
+    <div id="ratesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Day Works Rates</h3>
+                <button class="close-modal" onclick="hideModal('ratesModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-container">
+                    <table class="rates-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Rate (R)</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ratesBody">
+                            <!-- Rates will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="last-updated" id="ratesUpdated" style="font-size: 0.9rem; margin-top: 10px; color: var(--dark);">
+                    Rates last updated: Not yet saved
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" onclick="hideModal('ratesModal')">Cancel</button>
+                <button class="btn btn-success" onclick="saveRateChanges()">Save Rate Changes</button>
             </div>
         </div>
     </div>
@@ -2430,7 +2801,7 @@
             initApp();
         });
 
-        // Data structure - CLEAN START (no default users)
+        // Data structure
         let appData = {
             workers: [],
             sites: [],
@@ -2440,7 +2811,19 @@
             loans: [],
             expenses: [],
             payrolls: [],
-            invoices: []
+            invoices: [],
+            dayWorksData: [],
+            dayWorksRates: {
+                bricklayer: 63.99,
+                bricklayerOvertime: 74.10,
+                labour: 37.04,
+                labourOvertime: 42.62,
+                foremen: 87.08,
+                foremenOvertime: 93.23,
+                transport: 5.0,
+                normalHours: 9.0
+            },
+            payments: []
         };
 
         // Current state
@@ -2450,7 +2833,21 @@
             editLoanId: null,
             invoiceItems: [],
             attendanceChanged: false,
-            filteredWorkers: []
+            filteredWorkers: [],
+            currentDayWorksSite: null,
+            currentDayWorksFortnight: null
+        };
+
+        // Day Works rate descriptions
+        const rateDescriptions = {
+            bricklayer: "Bricklayer hourly rate",
+            bricklayerOvertime: "Bricklayer overtime hourly rate",
+            labour: "Labourer hourly rate",
+            labourOvertime: "Labourer overtime hourly rate",
+            foremen: "Foreman hourly rate",
+            foremenOvertime: "Foreman overtime hourly rate",
+            transport: "Transport rate per km",
+            normalHours: "Standard hours per day"
         };
 
         // Initialize app
@@ -2460,6 +2857,7 @@
             setDefaultDates();
             renderAll();
             updateFortnightSelectors();
+            populateRatesTable();
 
             showNotification('Tonnylays Construction System Loaded', 'success');
         }
@@ -2480,11 +2878,34 @@
                     appData.expenses = appData.expenses || [];
                     appData.payrolls = appData.payrolls || [];
                     appData.invoices = appData.invoices || [];
+                    appData.dayWorksData = appData.dayWorksData || [];
+                    appData.dayWorksRates = appData.dayWorksRates || {
+                        bricklayer: 63.99,
+                        bricklayerOvertime: 74.10,
+                        labour: 37.04,
+                        labourOvertime: 42.62,
+                        foremen: 87.08,
+                        foremenOvertime: 93.23,
+                        transport: 5.0,
+                        normalHours: 9.0
+                    };
+                    appData.payments = appData.payments || [];
                 } catch (e) {
                     console.error('Error loading data:', e);
                     appData = {
                         workers: [], sites: [], siteAssignments: [], fortnights: [],
-                        attendance: [], loans: [], expenses: [], payrolls: [], invoices: []
+                        attendance: [], loans: [], expenses: [], payrolls: [], invoices: [],
+                        dayWorksData: [], payments: [],
+                        dayWorksRates: {
+                            bricklayer: 63.99,
+                            bricklayerOvertime: 74.10,
+                            labour: 37.04,
+                            labourOvertime: 42.62,
+                            foremen: 87.08,
+                            foremenOvertime: 93.23,
+                            transport: 5.0,
+                            normalHours: 9.0
+                        }
                     };
                 }
             }
@@ -2493,6 +2914,39 @@
         // Save data to localStorage
         function saveData() {
             localStorage.setItem('tonnylaysData', JSON.stringify(appData));
+        }
+
+        // Save all data (new function)
+        function saveAllData() {
+            saveData();
+            showNotification('All data saved successfully', 'success');
+        }
+
+        // Refresh all data (new function)
+        function refreshAllData() {
+            loadData();
+            renderAll();
+            updateFortnightSelectors();
+            populateRatesTable();
+            
+            // Refresh current view
+            const activeSection = document.querySelector('.content-section.active');
+            if (activeSection) {
+                const sectionId = activeSection.id;
+                if (sectionId === 'attendance') {
+                    loadAttendanceGrid();
+                } else if (sectionId === 'payroll') {
+                    loadPayroll();
+                } else if (sectionId === 'dayworks') {
+                    loadDayWorksFromAttendance();
+                } else if (sectionId === 'payroll-payments') {
+                    loadPayrollPayments();
+                } else if (sectionId === 'expenses') {
+                    loadTransactions();
+                }
+            }
+            
+            showNotification('Data refreshed successfully', 'success');
         }
 
         // Set default dates
@@ -2513,6 +2967,12 @@
             // Set fortnight start date
             document.getElementById('fortnightStartDate').value = today;
             updateFortnightEndDate();
+
+            // Set combined payroll dates
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 13);
+            document.getElementById('combinedStartDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('combinedEndDate').value = today;
 
             // Generate invoice number
             updateInvoiceNumber();
@@ -2577,6 +3037,10 @@
                 loadAttendanceGrid();
             } else if (tabId === 'payroll') {
                 loadPayroll();
+            } else if (tabId === 'dayworks') {
+                loadDayWorksFromAttendance();
+            } else if (tabId === 'payroll-payments') {
+                loadPayrollPayments();
             } else if (tabId === 'loans') {
                 renderLoans();
             } else if (tabId === 'expenses') {
@@ -2601,6 +3065,7 @@
             const targetElement = document.getElementById(`${section}-${subTab}`);
             if (targetElement) {
                 targetElement.style.display = 'block';
+                targetElement.classList.add('active');
             }
 
             // Find and activate the clicked tab
@@ -2612,6 +3077,12 @@
             // Load data if needed
             if (section === 'loans') {
                 renderLoans();
+            } else if (section === 'payroll') {
+                if (subTab === 'single') {
+                    loadPayroll();
+                } else if (subTab === 'combined') {
+                    loadCombinedPayroll();
+                }
             }
         }
 
@@ -2625,6 +3096,8 @@
                 loadFortnightsList();
             } else if (modalId === 'payrollHistoryModal') {
                 renderPayrollHistory();
+            } else if (modalId === 'ratesModal') {
+                populateRatesTable();
             }
         }
 
@@ -2691,20 +3164,18 @@
 
             // Calculate current payroll from attendance (FIXED)
             let currentPayroll = 0;
-            const today = new Date();
-            const currentMonth = today.getMonth();
-            const currentYear = today.getFullYear();
+            const siteId = document.getElementById('dashboardSiteFilter').value;
 
-            // Get all attendance records for current month
-            const currentMonthAttendance = appData.attendance.filter(record => {
-                const recordDate = new Date(record.date);
-                return recordDate.getMonth() === currentMonth &&
-                    recordDate.getFullYear() === currentYear &&
-                    record.status === 'P';
-            });
+            // Get all attendance records
+            let attendanceRecords = appData.attendance.filter(record => record.status === 'P');
+
+            // Filter by site if selected
+            if (siteId && siteId !== 'all') {
+                attendanceRecords = attendanceRecords.filter(record => record.siteId === siteId);
+            }
 
             // Calculate payroll based on actual attendance
-            currentMonthAttendance.forEach(record => {
+            attendanceRecords.forEach(record => {
                 const worker = appData.workers.find(w => w.id === record.workerId);
                 if (worker && worker.active) {
                     currentPayroll += worker.dailyRate;
@@ -2744,9 +3215,6 @@
 
             // Group by role and calculate ACTUAL payroll from attendance
             const rolePayroll = {};
-            const today = new Date();
-            const currentMonth = today.getMonth();
-            const currentYear = today.getFullYear();
 
             workers.forEach(worker => {
                 if (!rolePayroll[worker.role]) {
@@ -2761,12 +3229,11 @@
             });
 
             // Calculate actual payroll from attendance for each role
-            const currentMonthAttendance = appData.attendance.filter(record => {
-                const recordDate = new Date(record.date);
-                return recordDate.getMonth() === currentMonth &&
-                    recordDate.getFullYear() === currentYear &&
-                    record.status === 'P';
-            });
+            let attendanceRecords = appData.attendance.filter(record => record.status === 'P');
+            
+            if (siteId && siteId !== 'all') {
+                attendanceRecords = attendanceRecords.filter(record => record.siteId === siteId);
+            }
 
             Object.keys(rolePayroll).forEach(role => {
                 const roleWorkers = rolePayroll[role].workers;
@@ -2775,8 +3242,8 @@
                 roleWorkers.forEach(workerId => {
                     const worker = appData.workers.find(w => w.id === workerId);
                     if (worker) {
-                        // Count attendance days for this worker in current month
-                        const workerAttendanceDays = currentMonthAttendance.filter(
+                        // Count attendance days for this worker
+                        const workerAttendanceDays = attendanceRecords.filter(
                             record => record.workerId === workerId
                         ).length;
 
@@ -2811,7 +3278,7 @@
 
         // Update dashboard when site filter changes
         function updateDashboard() {
-            updateRolePayrollBreakdown();
+            renderDashboard();
         }
 
         // Update dashboard site filter
@@ -2856,6 +3323,13 @@
 
             if (dailyRate <= 0) {
                 showNotification('Daily rate must be higher than 0', 'error');
+                return;
+            }
+
+            // Check for duplicate ID
+            const duplicate = appData.workers.find(w => w.idNumber === idNumber);
+            if (duplicate) {
+                showNotification('Worker with this ID number already exists', 'error');
                 return;
             }
 
@@ -3006,21 +3480,44 @@
             currentState.editWorkerId = null;
         }
 
-        // Render workers table
+        // Filter workers
+        function filterWorkers() {
+            const searchTerm = document.getElementById('workerSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#workersTableBody tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const name = cells[0].textContent.toLowerCase();
+                const surname = cells[1].textContent.toLowerCase();
+                const idNumber = cells[2].textContent.toLowerCase();
+                const role = cells[3].textContent.toLowerCase();
+                
+                if (name.includes(searchTerm) || surname.includes(searchTerm) || 
+                    idNumber.includes(searchTerm) || role.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Render workers table (sorted by role, then first name)
         function renderWorkers() {
             const tbody = document.getElementById('workersTableBody');
             tbody.innerHTML = '';
 
-            // Sort workers by role, then surname
+            // Sort workers by role, then first name
             const sortedWorkers = [...appData.workers].sort((a, b) => {
                 if (a.role !== b.role) return a.role.localeCompare(b.role);
-                return a.surname.localeCompare(b.surname);
+                return a.name.localeCompare(b.name);
             });
 
             sortedWorkers.forEach(worker => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${worker.name} ${worker.surname}</td>
+                    <td>${worker.name}</td>
+                    <td>${worker.surname}</td>
+                    <td>${worker.idNumber}</td>
                     <td>${worker.role}</td>
                     <td>R${worker.dailyRate.toLocaleString()}</td>
                     <td>${worker.bank}</td>
@@ -3117,7 +3614,7 @@
                     .filter(w => assignedWorkerIds.includes(w.id) && w.active)
                     .sort((a, b) => {
                         if (a.role !== b.role) return a.role.localeCompare(b.role);
-                        return a.surname.localeCompare(b.surname);
+                        return a.name.localeCompare(b.name);
                     });
 
                 // Get foreman name
@@ -3191,7 +3688,7 @@
             let foremanOptions = '<option value="">Select Foreman</option>';
             appData.workers
                 .filter(w => w.role === 'Foreman' && w.active)
-                .sort((a, b) => a.surname.localeCompare(b.surname))
+                .sort((a, b) => a.name.localeCompare(b.name))
                 .forEach(foreman => {
                     foremanOptions += `<option value="${foreman.id}" ${site.foreman === foreman.id ? 'selected' : ''}>${foreman.name} ${foreman.surname}</option>`;
                 });
@@ -3309,6 +3806,8 @@
                 'dashboardSiteFilter',
                 'attendanceSite',
                 'payrollSite',
+                'dayWorksSite',
+                'paymentsSite',
                 'addWorkersSiteSelect',
                 'fortnightSiteSelect',
                 'expenseSiteFilter',
@@ -3369,7 +3868,7 @@
             // Update header
             updateAttendanceHeader(dates);
 
-            // Get assigned workers sorted by role then name
+            // Get assigned workers sorted by role then name (only workers assigned to this site)
             const assignedWorkerIds = appData.siteAssignments
                 .filter(a => a.siteId === siteId && !a.endDate)
                 .map(a => a.workerId);
@@ -3378,8 +3877,8 @@
                 .filter(w => assignedWorkerIds.includes(w.id) && w.active)
                 .sort((a, b) => {
                     if (a.role !== b.role) return a.role.localeCompare(b.role);
-                    if (a.surname !== b.surname) return a.surname.localeCompare(b.surname);
-                    return a.name.localeCompare(b.name);
+                    if (a.name !== b.name) return a.name.localeCompare(b.name);
+                    return a.surname.localeCompare(b.surname);
                 });
 
             // Store filtered workers for search
@@ -3397,8 +3896,8 @@
 
         // Clear attendance grid
         function clearAttendanceGrid() {
-            document.getElementById('attendanceHeader').innerHTML = '<th class="worker-name-cell">Worker</th>';
-            document.getElementById('attendanceBody').innerHTML = '<tr><td colspan="15" style="text-align: center; padding: 20px;">Select site and fortnight</td></tr>';
+            document.getElementById('attendanceHeader').innerHTML = '<th class="worker-name-cell">Worker</th><th class="worker-action-cell">Actions</th>';
+            document.getElementById('attendanceBody').innerHTML = '<tr><td colspan="16" style="text-align: center; padding: 20px;">Select site and fortnight</td></tr>';
             document.getElementById('attendanceSummary').innerHTML = '<p>Select site and fortnight to view summary</p>';
             document.getElementById('saveAttendanceBtn').style.display = 'none';
         }
@@ -3406,7 +3905,7 @@
         // Update attendance header
         function updateAttendanceHeader(dates) {
             const headerRow = document.getElementById('attendanceHeader');
-            headerRow.innerHTML = '<th class="worker-name-cell">Worker</th>';
+            headerRow.innerHTML = '<th class="worker-name-cell">Worker</th><th class="worker-action-cell">Actions</th>';
 
             dates.forEach(dateStr => {
                 const th = document.createElement('th');
@@ -3416,7 +3915,7 @@
             });
         }
 
-        // Update attendance body
+        // Update attendance body with remove buttons
         function updateAttendanceBody(workers, siteId, fortnightId, dates) {
             const attendanceBody = document.getElementById('attendanceBody');
             attendanceBody.innerHTML = '';
@@ -3424,7 +3923,7 @@
             if (workers.length === 0) {
                 attendanceBody.innerHTML = `
                     <tr>
-                        <td colspan="15" style="text-align: center; padding: 20px;">
+                        <td colspan="16" style="text-align: center; padding: 20px;">
                             No workers assigned. Click "Add Workers" to assign workers to this site.
                         </td>
                     </tr>
@@ -3442,6 +3941,16 @@
                 nameCell.textContent = `${worker.name} ${worker.surname}`;
                 nameCell.dataset.role = worker.role;
                 row.appendChild(nameCell);
+
+                // Action cell with remove button
+                const actionCell = document.createElement('td');
+                actionCell.className = 'worker-action-cell';
+                actionCell.innerHTML = `
+                    <button class="btn btn-sm btn-danger" onclick="removeWorkerFromAttendance('${worker.id}', '${siteId}')" title="Remove from attendance">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                row.appendChild(actionCell);
 
                 // Attendance cells
                 dates.forEach(dateStr => {
@@ -3469,6 +3978,31 @@
 
                 attendanceBody.appendChild(row);
             });
+        }
+
+        // Remove worker from attendance (new function)
+        function removeWorkerFromAttendance(workerId, siteId) {
+            if (!confirm('Remove this worker from attendance? This will not delete the worker, just remove them from this site\'s attendance.')) return;
+
+            // Remove site assignment
+            const assignmentIndex = appData.siteAssignments.findIndex(a => 
+                a.workerId === workerId && 
+                a.siteId === siteId && 
+                !a.endDate
+            );
+
+            if (assignmentIndex !== -1) {
+                appData.siteAssignments[assignmentIndex].endDate = new Date().toISOString().split('T')[0];
+            }
+
+            // Remove attendance records for this worker at this site
+            appData.attendance = appData.attendance.filter(a => 
+                !(a.workerId === workerId && a.siteId === siteId)
+            );
+
+            saveData();
+            loadAttendanceGrid();
+            showNotification('Worker removed from attendance', 'success');
         }
 
         // Toggle attendance status
@@ -3674,7 +4208,7 @@
                 .filter(w => w.active && !assignedWorkerIds.includes(w.id))
                 .sort((a, b) => {
                     if (a.role !== b.role) return a.role.localeCompare(b.role);
-                    return a.surname.localeCompare(b.surname);
+                    return a.name.localeCompare(b.name);
                 });
 
             if (availableWorkers.length === 0) {
@@ -3781,13 +4315,8 @@
                 return;
             }
 
-            const site = appData.sites.find(s => s.id === siteId);
-            const fortnight = appData.fortnights.find(f => f.id === fortnightId);
-
-            if (!site || !fortnight) return;
-
             showNotification('Exporting to PDF...', 'success');
-            // PDF export implementation
+            // PDF export implementation would go here
         }
 
         // Export attendance Excel
@@ -3814,7 +4343,7 @@
                 .filter(w => assignedWorkerIds.includes(w.id) && w.active)
                 .sort((a, b) => {
                     if (a.role !== b.role) return a.role.localeCompare(b.role);
-                    return a.surname.localeCompare(b.surname);
+                    return a.name.localeCompare(b.name);
                 });
 
             const dates = [];
@@ -3858,7 +4387,524 @@
         }
 
         // ======================
-        // FORTNIGHT MANAGEMENT (FIXED)
+        // DAY WORKS MANAGEMENT
+        // ======================
+
+        // Populate rates table
+        function populateRatesTable() {
+            const ratesBody = document.getElementById('ratesBody');
+            ratesBody.innerHTML = '';
+
+            // Create rate rows
+            const rateKeys = [
+                'bricklayer', 'bricklayerOvertime', 
+                'labour', 'labourOvertime', 
+                'foremen', 'foremenOvertime', 
+                'transport', 'normalHours'
+            ];
+
+            rateKeys.forEach((key) => {
+                const row = ratesBody.insertRow();
+                const displayName = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                
+                row.innerHTML = `
+                    <td>${displayName}</td>
+                    <td><input type="number" class="editable-rate rate-input" id="rate-${key}" value="${appData.dayWorksRates[key]}" data-key="${key}" step="0.01" min="0"></td>
+                    <td>${rateDescriptions[key] || ''}</td>
+                `;
+                
+                // Add event listener to rate input
+                const rateInput = document.getElementById(`rate-${key}`);
+                rateInput.addEventListener('change', handleRateChange);
+            });
+        }
+
+        // Handle rate changes
+        function handleRateChange(event) {
+            const input = event.target;
+            const key = input.getAttribute('data-key');
+            const value = parseFloat(input.value) || 0;
+            
+            // Update the rates object
+            appData.dayWorksRates[key] = value;
+            
+            // Show warning that changes need to be saved
+            document.getElementById('ratesUpdated').innerHTML = 
+                '<span style="color: #e74c3c;">Rates edited - click "Save Rate Changes" to apply to all calculations</span>';
+        }
+
+        // Save rate changes
+        function saveRateChanges() {
+            saveData();
+            
+            // Update the last saved timestamp
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('ratesUpdated').innerHTML = 
+                `Rates last updated: ${timeString} - All calculations updated`;
+            
+            // Recalculate day works if loaded
+            if (currentState.currentDayWorksSite && currentState.currentDayWorksFortnight) {
+                loadDayWorksFromAttendance();
+            }
+            
+            showNotification('Rates saved successfully', 'success');
+        }
+
+        // Load day works from attendance data
+        function loadDayWorksFromAttendance() {
+            const siteId = document.getElementById('dayWorksSite').value;
+            const fortnightId = document.getElementById('dayWorksFortnight').value;
+
+            if (!siteId || !fortnightId) {
+                clearDayWorksTable();
+                return;
+            }
+
+            const site = appData.sites.find(s => s.id === siteId);
+            const fortnight = appData.fortnights.find(f => f.id === fortnightId);
+
+            if (!site || !fortnight) {
+                clearDayWorksTable();
+                return;
+            }
+
+            currentState.currentDayWorksSite = siteId;
+            currentState.currentDayWorksFortnight = fortnightId;
+
+            // Generate dates for the fortnight
+            const dates = [];
+            const currentDate = new Date(fortnight.startDate);
+            for (let i = 0; i < 14; i++) {
+                dates.push(currentDate.toISOString().split('T')[0]);
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            // Get attendance data for this site and fortnight
+            const attendanceRecords = appData.attendance.filter(a => 
+                a.siteId === siteId && 
+                dates.includes(a.date) && 
+                a.status === 'P'
+            );
+
+            // Group by date and role
+            const dayWorksByDate = {};
+
+            dates.forEach(date => {
+                dayWorksByDate[date] = {
+                    bricklayer: 0,
+                    labourers: 0,
+                    foreman: 0,
+                    transport: 0,
+                    hours: appData.dayWorksRates.normalHours,
+                    overtime: 0
+                };
+            });
+
+            // Calculate counts by role for each day
+            attendanceRecords.forEach(record => {
+                const worker = appData.workers.find(w => w.id === record.workerId);
+                if (!worker) return;
+
+                const date = record.date;
+                if (!dayWorksByDate[date]) return;
+
+                // Determine overtime based on day of week
+                const dayOfWeek = new Date(date).getDay();
+                let overtime = 0;
+                let hours = appData.dayWorksRates.normalHours;
+
+                if (dayOfWeek === 5) { // Friday
+                    hours = 6;
+                    overtime = 3.5;
+                } else if (dayOfWeek === 0 || dayOfWeek === 6) { // Weekend
+                    hours = 0;
+                    overtime = appData.dayWorksRates.normalHours;
+                }
+
+                // Add to appropriate role
+                if (worker.role === 'Bricklayer') {
+                    dayWorksByDate[date].bricklayer++;
+                } else if (worker.role === 'Labourer') {
+                    dayWorksByDate[date].labourers++;
+                } else if (worker.role === 'Foreman') {
+                    dayWorksByDate[date].foreman++;
+                } else if (worker.role === 'Transport' || worker.role === 'Driver') {
+                    dayWorksByDate[date].transport++;
+                }
+
+                // Set hours and overtime
+                dayWorksByDate[date].hours = hours;
+                dayWorksByDate[date].overtime = overtime;
+            });
+
+            // Convert to array and sort by date
+            const dayWorksData = Object.keys(dayWorksByDate)
+                .sort((a, b) => new Date(a) - new Date(b))
+                .map(date => ({
+                    date: date,
+                    ...dayWorksByDate[date]
+                }));
+
+            // Update table
+            updateDayWorksTable(dayWorksData);
+        }
+
+        // Clear day works table
+        function clearDayWorksTable() {
+            const tbody = document.getElementById('dayWorksBody');
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">Select site and fortnight</td></tr>';
+            updateDayWorksTotals();
+        }
+
+        // Update day works table
+        function updateDayWorksTable(data) {
+            const tbody = document.getElementById('dayWorksBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">No day works data for selected period</td></tr>';
+                updateDayWorksTotals();
+                return;
+            }
+
+            data.forEach((rowData, index) => {
+                const row = tbody.insertRow();
+                const dayOfWeek = getDayOfWeek(rowData.date);
+                
+                // Calculate total for this row
+                const calculation = calculateDayWorksRowTotal(rowData);
+                
+                row.innerHTML = `
+                    <td>
+                        <input type="text" class="editable date-input" value="${formatDateShort(rowData.date)}" data-index="${index}" data-field="date">
+                    </td>
+                    <td><span class="day-of-week">${dayOfWeek}</span></td>
+                    <td><input type="number" class="editable bricklayer-input" value="${rowData.bricklayer}" data-index="${index}" data-field="bricklayer" min="0" step="1"></td>
+                    <td><input type="number" class="editable labourers-input" value="${rowData.labourers}" data-index="${index}" data-field="labourers" min="0" step="1"></td>
+                    <td><input type="number" class="editable foreman-input" value="${rowData.foreman}" data-index="${index}" data-field="foreman" min="0" step="1"></td>
+                    <td><input type="number" class="editable transport-input" value="${rowData.transport}" data-index="${index}" data-field="transport" min="0" step="1"></td>
+                    <td><input type="number" class="editable hours-input" value="${rowData.hours}" data-index="${index}" data-field="hours" min="0" step="0.5"></td>
+                    <td><input type="number" class="editable overtime-input" value="${rowData.overtime}" data-index="${index}" data-field="overtime" min="0" step="0.5"></td>
+                    <td class="total-cell" id="dayworks-total-${index}">${formatCurrency(calculation.total)}</td>
+                `;
+                
+                // Add event listeners to the inputs for real-time calculation
+                const inputs = row.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', handleDayWorksInputChange);
+                    input.addEventListener('change', handleDayWorksInputChange);
+                });
+            });
+
+            // Store the data
+            appData.dayWorksData = data;
+            updateDayWorksTotals();
+        }
+
+        // Calculate day works row total
+        function calculateDayWorksRowTotal(rowData) {
+            // Get values from the row, default to 0 if empty
+            const bricklayer = parseFloat(rowData.bricklayer) || 0;
+            const labourers = parseFloat(rowData.labourers) || 0;
+            const foreman = parseFloat(rowData.foreman) || 0;
+            const transport = parseFloat(rowData.transport) || 0;
+            const hours = parseFloat(rowData.hours) || 0;
+            const overtime = parseFloat(rowData.overtime) || 0;
+            
+            // Calculate normal hours (total hours minus overtime)
+            const normalHours = Math.max(0, hours - overtime);
+            
+            // Calculate costs using current rates
+            const bricklayerCost = (bricklayer * normalHours * appData.dayWorksRates.bricklayer) + 
+                                  (bricklayer * overtime * appData.dayWorksRates.bricklayerOvertime);
+            
+            const labourersCost = (labourers * normalHours * appData.dayWorksRates.labour) + 
+                                 (labourers * overtime * appData.dayWorksRates.labourOvertime);
+            
+            const foremanCost = (foreman * normalHours * appData.dayWorksRates.foremen) + 
+                               (foreman * overtime * appData.dayWorksRates.foremenOvertime);
+            
+            const transportCost = transport * appData.dayWorksRates.transport;
+            
+            // Total cost
+            const total = bricklayerCost + labourersCost + foremanCost + transportCost;
+            
+            return {
+                total: Math.round(total * 100) / 100,
+                breakdown: {
+                    bricklayerCost: Math.round(bricklayerCost * 100) / 100,
+                    labourersCost: Math.round(labourersCost * 100) / 100,
+                    foremanCost: Math.round(foremanCost * 100) / 100,
+                    transportCost: Math.round(transportCost * 100) / 100,
+                    normalHours: normalHours,
+                    overtimeHours: overtime
+                }
+            };
+        }
+
+        // Handle day works input changes
+        function handleDayWorksInputChange(event) {
+            const input = event.target;
+            const index = input.getAttribute('data-index');
+            const field = input.getAttribute('data-field');
+            const value = input.value;
+            
+            // Update the data array
+            appData.dayWorksData[index][field] = field === 'date' ? value : parseFloat(value) || 0;
+            
+            // Recalculate and update the total for this row
+            updateDayWorksRowTotal(index);
+            
+            // Update totals
+            updateDayWorksTotals();
+        }
+
+        // Update day works row total
+        function updateDayWorksRowTotal(index) {
+            if (!appData.dayWorksData[index]) return;
+            
+            const calculation = calculateDayWorksRowTotal(appData.dayWorksData[index]);
+            const totalCell = document.getElementById(`dayworks-total-${index}`);
+            if (totalCell) {
+                totalCell.textContent = formatCurrency(calculation.total);
+            }
+        }
+
+        // Update day works totals
+        function updateDayWorksTotals() {
+            let totalBricklayer = 0;
+            let totalLabourers = 0;
+            let totalForeman = 0;
+            let totalTransport = 0;
+            let totalHours = 0;
+            let totalOvertime = 0;
+            let grandTotal = 0;
+            
+            appData.dayWorksData.forEach((data, index) => {
+                const bricklayer = parseFloat(data.bricklayer) || 0;
+                const labourers = parseFloat(data.labourers) || 0;
+                const foreman = parseFloat(data.foreman) || 0;
+                const transport = parseFloat(data.transport) || 0;
+                const hours = parseFloat(data.hours) || 0;
+                const overtime = parseFloat(data.overtime) || 0;
+                
+                totalBricklayer += bricklayer;
+                totalLabourers += labourers;
+                totalForeman += foreman;
+                totalTransport += transport;
+                totalHours += hours;
+                totalOvertime += overtime;
+                
+                const calculation = calculateDayWorksRowTotal(data);
+                grandTotal += calculation.total;
+            });
+            
+            // Update totals row
+            document.getElementById('total-bricklayer').textContent = totalBricklayer;
+            document.getElementById('total-labourers').textContent = totalLabourers;
+            document.getElementById('total-foreman').textContent = totalForeman;
+            document.getElementById('total-transport').textContent = totalTransport;
+            document.getElementById('total-hours').textContent = totalHours;
+            document.getElementById('total-overtime').textContent = totalOvertime;
+            document.getElementById('grand-total').textContent = formatCurrency(grandTotal);
+        }
+
+        // Calculate all day works totals
+        function calculateAllDayWorksTotals() {
+            for (let i = 0; i < appData.dayWorksData.length; i++) {
+                updateDayWorksRowTotal(i);
+            }
+            updateDayWorksTotals();
+            showNotification('All day works totals calculated', 'success');
+        }
+
+        // Get day of week
+        function getDayOfWeek(dateStr) {
+            const date = new Date(dateStr);
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            return days[date.getDay()];
+        }
+
+        // Format currency
+        function formatCurrency(value) {
+            return 'R' + value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        }
+
+        // Export day works client report
+        function exportDayWorksClientReport() {
+            const siteId = document.getElementById('dayWorksSite').value;
+            const fortnightId = document.getElementById('dayWorksFortnight').value;
+
+            if (!siteId || !fortnightId) {
+                showNotification('Please select site and fortnight', 'error');
+                return;
+            }
+
+            const site = appData.sites.find(s => s.id === siteId);
+            const fortnight = appData.fortnights.find(f => f.id === fortnightId);
+
+            if (!site || !fortnight) return;
+
+            // Create client report table
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.style.fontFamily = 'Arial, sans-serif';
+            table.style.fontSize = '14px';
+            
+            // Create header
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const headers = ['Date', 'Day', 'Bricklayer', 'Labourers', 'Foreman', 'Transport'];
+            
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                th.style.backgroundColor = '#3498db';
+                th.style.color = 'white';
+                th.style.padding = '10px';
+                th.style.textAlign = 'left';
+                th.style.border = '1px solid #ddd';
+                headerRow.appendChild(th);
+            });
+            
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            // Create body
+            const tbody = document.createElement('tbody');
+            
+            appData.dayWorksData.forEach(data => {
+                if (data.bricklayer > 0 || data.labourers > 0 || data.foreman > 0) {
+                    const row = document.createElement('tr');
+                    const cells = [
+                        formatDateShort(data.date),
+                        getDayOfWeek(data.date),
+                        data.bricklayer,
+                        data.labourers,
+                        data.foreman,
+                        data.transport
+                    ];
+                    
+                    cells.forEach((cellText, index) => {
+                        const td = document.createElement('td');
+                        td.textContent = cellText;
+                        td.style.padding = '8px';
+                        td.style.border = '1px solid #ddd';
+                        if (index % 2 === 0) {
+                            td.style.backgroundColor = '#f9f9f9';
+                        }
+                        row.appendChild(td);
+                    });
+                    
+                    tbody.appendChild(row);
+                }
+            });
+            
+            table.appendChild(tbody);
+            
+            // Add title
+            const container = document.createElement('div');
+            const title = document.createElement('h2');
+            title.textContent = 'Day Works Report - Client View';
+            title.style.textAlign = 'center';
+            title.style.color = '#2c3e50';
+            title.style.marginBottom = '15px';
+            
+            const dateStamp = document.createElement('div');
+            dateStamp.textContent = 'Generated: ' + new Date().toLocaleDateString();
+            dateStamp.style.textAlign = 'center';
+            dateStamp.style.color = '#7f8c8d';
+            dateStamp.style.marginBottom = '20px';
+            dateStamp.style.fontSize = '12px';
+            
+            container.appendChild(title);
+            container.appendChild(dateStamp);
+            container.appendChild(table);
+            
+            document.body.appendChild(container);
+            
+            html2canvas(container, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false
+            }).then(canvas => {
+                document.body.removeChild(container);
+                
+                const link = document.createElement('a');
+                link.download = 'DayWorks_Client_Report_' + new Date().toISOString().slice(0,10) + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+            
+            showNotification('Client report exported', 'success');
+        }
+
+        // Export day works full report
+        function exportDayWorksFullReport() {
+            const siteId = document.getElementById('dayWorksSite').value;
+            const fortnightId = document.getElementById('dayWorksFortnight').value;
+
+            if (!siteId || !fortnightId) {
+                showNotification('Please select site and fortnight', 'error');
+                return;
+            }
+
+            const site = appData.sites.find(s => s.id === siteId);
+            const fortnight = appData.fortnights.find(f => f.id === fortnightId);
+
+            if (!site || !fortnight) return;
+
+            const originalTable = document.getElementById('dayWorksTable');
+            const clonedTable = originalTable.cloneNode(true);
+            
+            // Remove input elements and show values
+            clonedTable.querySelectorAll('input').forEach(input => {
+                const td = input.parentElement;
+                td.textContent = input.value;
+                td.style.padding = '6px 8px';
+            });
+            
+            // Create container
+            const container = document.createElement('div');
+            const title = document.createElement('h2');
+            title.textContent = 'Day Works Report - Full Details';
+            title.style.textAlign = 'center';
+            title.style.color = '#2c3e50';
+            title.style.marginBottom = '15px';
+            
+            const dateStamp = document.createElement('div');
+            dateStamp.textContent = 'Generated: ' + new Date().toLocaleDateString();
+            dateStamp.style.textAlign = 'center';
+            dateStamp.style.color = '#7f8c8d';
+            dateStamp.style.marginBottom = '20px';
+            dateStamp.style.fontSize = '12px';
+            
+            container.appendChild(title);
+            container.appendChild(dateStamp);
+            container.appendChild(clonedTable);
+            
+            document.body.appendChild(container);
+            
+            html2canvas(container, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false
+            }).then(canvas => {
+                document.body.removeChild(container);
+                
+                const link = document.createElement('a');
+                link.download = 'DayWorks_Full_Report_' + new Date().toISOString().slice(0,10) + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+            
+            showNotification('Full report exported', 'success');
+        }
+
+        // ======================
+        // FORTNIGHT MANAGEMENT
         // ======================
 
         // Save fortnight
@@ -3911,56 +4957,39 @@
             }, 100);
         }
 
-        // Update fortnight selectors (FIXED)
+        // Update fortnight selectors
         function updateFortnightSelectors() {
             // Attendance fortnight selector
-            const attendanceSiteSelect = document.getElementById('attendanceSite');
             const fortnightSelect = document.getElementById('fortnightSelect');
-
-            if (fortnightSelect) {
-                const currentValue = fortnightSelect.value;
-                fortnightSelect.innerHTML = '<option value="">Select Fortnight</option>';
-
-                // Sort fortnights by start date (newest first)
-                appData.fortnights
-                    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
-                    .forEach(fortnight => {
-                        const site = appData.sites.find(s => s.id === fortnight.siteId);
-                        if (!site) return;
-
-                        const option = document.createElement('option');
-                        option.value = fortnight.id;
-                        option.textContent = `${site.name} - ${formatDate(fortnight.startDate)} to ${formatDate(fortnight.endDate)}`;
-                        fortnightSelect.appendChild(option);
-                    });
-
-                if (currentValue && Array.from(fortnightSelect.options).some(opt => opt.value === currentValue)) {
-                    fortnightSelect.value = currentValue;
-                }
-            }
-
-            // Payroll fortnight selector
+            const dayWorksFortnight = document.getElementById('dayWorksFortnight');
             const payrollFortnight = document.getElementById('payrollFortnight');
-            if (payrollFortnight) {
-                const currentValue = payrollFortnight.value;
-                payrollFortnight.innerHTML = '<option value="">Select Fortnight</option>';
+            const paymentsFortnight = document.getElementById('paymentsFortnight');
 
-                appData.fortnights
-                    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
-                    .forEach(fortnight => {
-                        const site = appData.sites.find(s => s.id === fortnight.siteId);
-                        if (!site) return;
+            const selectors = [fortnightSelect, dayWorksFortnight, payrollFortnight, paymentsFortnight];
 
-                        const option = document.createElement('option');
-                        option.value = fortnight.id;
-                        option.textContent = `${site.name} (${formatDate(fortnight.startDate)} - ${formatDate(fortnight.endDate)})`;
-                        payrollFortnight.appendChild(option);
-                    });
+            selectors.forEach(select => {
+                if (select) {
+                    const currentValue = select.value;
+                    select.innerHTML = '<option value="">Select Fortnight</option>';
 
-                if (currentValue && Array.from(payrollFortnight.options).some(opt => opt.value === currentValue)) {
-                    payrollFortnight.value = currentValue;
+                    // Sort fortnights by start date (newest first)
+                    appData.fortnights
+                        .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+                        .forEach(fortnight => {
+                            const site = appData.sites.find(s => s.id === fortnight.siteId);
+                            if (!site) return;
+
+                            const option = document.createElement('option');
+                            option.value = fortnight.id;
+                            option.textContent = `${site.name} - ${formatDate(fortnight.startDate)} to ${formatDate(fortnight.endDate)}`;
+                            select.appendChild(option);
+                        });
+
+                    if (currentValue && Array.from(select.options).some(opt => opt.value === currentValue)) {
+                        select.value = currentValue;
+                    }
                 }
-            }
+            });
         }
 
         // Load fortnights list for management
@@ -4003,7 +5032,7 @@
         }
 
         // ======================
-        // PAYROLL
+        // PAYROLL CALCULATION
         // ======================
 
         // Load payroll
@@ -4046,7 +5075,7 @@
                 .filter(w => assignedWorkerIds.includes(w.id) && w.active)
                 .sort((a, b) => {
                     if (a.role !== b.role) return a.role.localeCompare(b.role);
-                    return a.surname.localeCompare(b.surname);
+                    return a.name.localeCompare(b.name);
                 });
 
             // Generate dates
@@ -4247,6 +5276,155 @@
             showNotification('Payroll saved successfully', 'success');
         }
 
+        // Load combined payroll
+        function loadCombinedPayroll() {
+            document.getElementById('combinedPayrollTableBody').innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 20px;">
+                        Select date range, then click Calculate
+                    </td>
+                </tr>
+            `;
+
+            updateCombinedPayrollTotals(0, 0, 0, 0);
+        }
+
+        // Calculate combined payroll for workers across multiple sites
+        function calculateCombinedPayroll() {
+            const startDate = document.getElementById('combinedStartDate').value;
+            const endDate = document.getElementById('combinedEndDate').value;
+
+            if (!startDate || !endDate) {
+                showNotification('Please select start and end dates', 'error');
+                return;
+            }
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+
+            if (start > end) {
+                showNotification('Start date must be before end date', 'error');
+                return;
+            }
+
+            // Get all active workers
+            const activeWorkers = appData.workers.filter(w => w.active);
+
+            // Calculate payroll for each worker across all sites
+            const combinedData = [];
+            let totalGross = 0, totalLoans = 0, totalCredit = 0, totalNet = 0;
+
+            activeWorkers.forEach(worker => {
+                // Get attendance for this worker across all sites within date range
+                const workerAttendance = appData.attendance.filter(a =>
+                    a.workerId === worker.id &&
+                    a.status === 'P' &&
+                    new Date(a.date) >= start &&
+                    new Date(a.date) <= end
+                );
+
+                if (workerAttendance.length === 0) return;
+
+                // Group by site
+                const sitesWorked = {};
+                workerAttendance.forEach(record => {
+                    const site = appData.sites.find(s => s.id === record.siteId);
+                    if (site) {
+                        if (!sitesWorked[site.id]) {
+                            sitesWorked[site.id] = {
+                                siteName: site.name,
+                                days: 0
+                            };
+                        }
+                        sitesWorked[site.id].days++;
+                    }
+                });
+
+                const totalDays = workerAttendance.length;
+                const grossPay = totalDays * worker.dailyRate;
+
+                // Get loans and credit
+                const workerLoans = appData.loans.filter(l =>
+                    l.workerId === worker.id &&
+                    l.type === 'loan' &&
+                    l.status === 'pending'
+                );
+                const totalLoansAmount = workerLoans.reduce((sum, loan) => sum + loan.amount, 0);
+
+                const workerCredit = appData.loans.filter(l =>
+                    l.workerId === worker.id &&
+                    l.type === 'credit' &&
+                    l.status === 'pending'
+                );
+                const totalCreditAmount = workerCredit.reduce((sum, credit) => sum + credit.amount, 0);
+
+                const netPay = grossPay - totalLoansAmount + totalCreditAmount;
+
+                totalGross += grossPay;
+                totalLoans += totalLoansAmount;
+                totalCredit += totalCreditAmount;
+                totalNet += netPay;
+
+                const sitesList = Object.values(sitesWorked)
+                    .map(s => `${s.siteName} (${s.days} days)`)
+                    .join(', ');
+
+                combinedData.push({
+                    worker,
+                    sitesList,
+                    totalDays,
+                    grossPay,
+                    loans: totalLoansAmount,
+                    credit: totalCreditAmount,
+                    netPay
+                });
+            });
+
+            // Render combined payroll table
+            renderCombinedPayrollTable(combinedData);
+            updateCombinedPayrollTotals(totalGross, totalLoans, totalCredit, totalNet);
+        }
+
+        // Render combined payroll table
+        function renderCombinedPayrollTable(payrollData) {
+            const tbody = document.getElementById('combinedPayrollTableBody');
+            tbody.innerHTML = '';
+
+            if (payrollData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 20px;">
+                            No workers with attendance in selected period
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            payrollData.forEach(data => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${data.worker.name} ${data.worker.surname}</td>
+                    <td>${data.sitesList}</td>
+                    <td>${data.totalDays}</td>
+                    <td>R${data.worker.dailyRate.toLocaleString()}</td>
+                    <td>R${data.grossPay.toLocaleString()}</td>
+                    <td>R${data.loans.toLocaleString()}</td>
+                    <td>R${data.credit.toLocaleString()}</td>
+                    <td style="font-weight: bold;">R${data.netPay.toLocaleString()}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update combined payroll totals
+        function updateCombinedPayrollTotals(gross, loans, credit, net) {
+            document.getElementById('combinedTotalGross').textContent = 'R' + gross.toLocaleString();
+            document.getElementById('combinedTotalLoans').textContent = 'R' + loans.toLocaleString();
+            document.getElementById('combinedTotalCredit').textContent = 'R' + credit.toLocaleString();
+            document.getElementById('combinedTotalNet').textContent = 'R' + net.toLocaleString();
+        }
+
         // Render payroll history
         function renderPayrollHistory() {
             const tbody = document.getElementById('payrollHistoryBody');
@@ -4303,13 +5481,290 @@
                 return;
             }
 
+            showNotification('Exporting to PDF...', 'success');
+            // PDF export implementation would go here
+        }
+
+        // Export combined payroll PDF
+        function exportCombinedPayrollPDF() {
+            showNotification('Exporting to PDF...', 'success');
+            // PDF export implementation would go here
+        }
+
+        // ======================
+        // PAYROLL PAYMENTS
+        // ======================
+
+        // Load payroll payments
+        function loadPayrollPayments() {
+            const siteId = document.getElementById('paymentsSite').value;
+            const fortnightId = document.getElementById('paymentsFortnight').value;
+
+            if (!siteId || !fortnightId) {
+                document.getElementById('paymentsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px;">
+                            Select site and fortnight
+                        </td>
+                    </tr>
+                `;
+                updatePaymentsTotals(0);
+                return;
+            }
+
             const site = appData.sites.find(s => s.id === siteId);
             const fortnight = appData.fortnights.find(f => f.id === fortnightId);
 
             if (!site || !fortnight) return;
 
-            showNotification('Exporting to PDF...', 'success');
-            // PDF export implementation
+            // Get assigned workers
+            const assignedWorkerIds = appData.siteAssignments
+                .filter(a => a.siteId === siteId && !a.endDate)
+                .map(a => a.workerId);
+
+            const assignedWorkers = appData.workers
+                .filter(w => assignedWorkerIds.includes(w.id) && w.active)
+                .sort((a, b) => {
+                    if (a.role !== b.role) return a.role.localeCompare(b.role);
+                    return a.name.localeCompare(b.name);
+                });
+
+            // Generate dates
+            const dates = [];
+            const currentDate = new Date(fortnight.startDate);
+            for (let i = 0; i < 14; i++) {
+                dates.push(currentDate.toISOString().split('T')[0]);
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+
+            // Calculate payroll and get existing payments
+            const paymentData = [];
+            let totalNet = 0;
+
+            assignedWorkers.forEach(worker => {
+                // Count present days
+                let presentDays = 0;
+                dates.forEach(date => {
+                    const attendance = appData.attendance.find(a =>
+                        a.workerId === worker.id &&
+                        a.siteId === siteId &&
+                        a.date === date
+                    );
+                    if (attendance && attendance.status === 'P') presentDays++;
+                });
+
+                if (presentDays === 0) return;
+
+                const grossPay = presentDays * worker.dailyRate;
+
+                // Get loans and credit
+                const workerLoans = appData.loans.filter(l =>
+                    l.workerId === worker.id &&
+                    l.type === 'loan' &&
+                    l.status === 'pending'
+                );
+                const totalLoansAmount = workerLoans.reduce((sum, loan) => sum + loan.amount, 0);
+
+                const workerCredit = appData.loans.filter(l =>
+                    l.workerId === worker.id &&
+                    l.type === 'credit' &&
+                    l.status === 'pending'
+                );
+                const totalCreditAmount = workerCredit.reduce((sum, credit) => sum + credit.amount, 0);
+
+                const netPay = grossPay - totalLoansAmount + totalCreditAmount;
+
+                // Get existing payment record
+                const existingPayment = appData.payments.find(p =>
+                    p.workerId === worker.id &&
+                    p.siteId === siteId &&
+                    p.fortnightId === fortnightId
+                );
+
+                paymentData.push({
+                    worker,
+                    netPay,
+                    paymentStatus: existingPayment ? existingPayment.status : 'pending',
+                    paymentDate: existingPayment ? existingPayment.paymentDate : null,
+                    paymentId: existingPayment ? existingPayment.id : null
+                });
+
+                totalNet += netPay;
+            });
+
+            // Render payments table
+            renderPaymentsTable(paymentData);
+            updatePaymentsTotals(totalNet);
+        }
+
+        // Render payments table
+        function renderPaymentsTable(paymentData) {
+            const tbody = document.getElementById('paymentsTableBody');
+            tbody.innerHTML = '';
+
+            if (paymentData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px;">
+                            No workers with attendance in selected period
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            paymentData.forEach(data => {
+                const row = document.createElement('tr');
+                row.id = `payment-row-${data.worker.id}`;
+                if (data.paymentStatus === 'paid') {
+                    row.className = 'payment-paid';
+                }
+
+                row.innerHTML = `
+                    <td>${data.worker.name} ${data.worker.surname}</td>
+                    <td>${data.worker.role}</td>
+                    <td>${data.worker.account} (${data.worker.bank})</td>
+                    <td>R${data.netPay.toLocaleString()}</td>
+                    <td>
+                        <select class="payment-status-select" data-worker-id="${data.worker.id}" onchange="updatePaymentStatus('${data.worker.id}')">
+                            <option value="pending" ${data.paymentStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="paid" ${data.paymentStatus === 'paid' ? 'selected' : ''}>Paid</option>
+                        </select>
+                    </td>
+                    <td>${data.paymentDate ? formatDate(data.paymentDate) : '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="recordPayment('${data.worker.id}')" ${data.paymentStatus === 'paid' ? 'disabled' : ''}>
+                            <i class="fas fa-money-check-alt"></i> Record
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update payment status
+        function updatePaymentStatus(workerId) {
+            const siteId = document.getElementById('paymentsSite').value;
+            const fortnightId = document.getElementById('paymentsFortnight').value;
+            const select = document.querySelector(`select[data-worker-id="${workerId}"]`);
+            const status = select.value;
+
+            // Find or create payment record
+            const existingIndex = appData.payments.findIndex(p =>
+                p.workerId === workerId &&
+                p.siteId === siteId &&
+                p.fortnightId === fortnightId
+            );
+
+            if (existingIndex !== -1) {
+                appData.payments[existingIndex].status = status;
+                if (status === 'paid' && !appData.payments[existingIndex].paymentDate) {
+                    appData.payments[existingIndex].paymentDate = new Date().toISOString().split('T')[0];
+                }
+            } else {
+                const payment = {
+                    id: generateId(),
+                    workerId,
+                    siteId,
+                    fortnightId,
+                    status,
+                    paymentDate: status === 'paid' ? new Date().toISOString().split('T')[0] : null,
+                    createdAt: new Date().toISOString()
+                };
+                appData.payments.push(payment);
+            }
+
+            saveData();
+            
+            // Update row appearance
+            const row = document.getElementById(`payment-row-${workerId}`);
+            if (status === 'paid') {
+                row.className = 'payment-paid';
+                row.querySelector('button').disabled = true;
+            } else {
+                row.className = '';
+                row.querySelector('button').disabled = false;
+            }
+
+            updatePaymentsStatusSummary();
+        }
+
+        // Record payment
+        function recordPayment(workerId) {
+            const siteId = document.getElementById('paymentsSite').value;
+            const fortnightId = document.getElementById('paymentsFortnight').value;
+
+            // Update status to paid
+            const select = document.querySelector(`select[data-worker-id="${workerId}"]`);
+            select.value = 'paid';
+            updatePaymentStatus(workerId);
+
+            showNotification('Payment recorded', 'success');
+        }
+
+        // Mark all as paid
+        function markAllAsPaid() {
+            const siteId = document.getElementById('paymentsSite').value;
+            const fortnightId = document.getElementById('paymentsFortnight').value;
+
+            if (!siteId || !fortnightId) {
+                showNotification('Please select site and fortnight first', 'error');
+                return;
+            }
+
+            if (!confirm('Mark all payments as paid?')) return;
+
+            // Get all payment rows
+            const selects = document.querySelectorAll('.payment-status-select');
+            selects.forEach(select => {
+                select.value = 'paid';
+                updatePaymentStatus(select.dataset.workerId);
+            });
+
+            showNotification('All payments marked as paid', 'success');
+        }
+
+        // Update payments totals
+        function updatePaymentsTotals(totalNet) {
+            document.getElementById('paymentsTotalNet').textContent = 'R' + totalNet.toLocaleString();
+            updatePaymentsStatusSummary();
+        }
+
+        // Update payments status summary
+        function updatePaymentsStatusSummary() {
+            const siteId = document.getElementById('paymentsSite').value;
+            const fortnightId = document.getElementById('paymentsFortnight').value;
+
+            if (!siteId || !fortnightId) {
+                document.getElementById('paymentsStatusSummary').textContent = '';
+                return;
+            }
+
+            const paymentsForPeriod = appData.payments.filter(p =>
+                p.siteId === siteId &&
+                p.fortnightId === fortnightId
+            );
+
+            const paidCount = paymentsForPeriod.filter(p => p.status === 'paid').length;
+            const pendingCount = paymentsForPeriod.filter(p => p.status === 'pending').length;
+            const totalCount = paidCount + pendingCount;
+
+            document.getElementById('paymentsStatusSummary').textContent = 
+                `${paidCount} paid, ${pendingCount} pending (${totalCount} total)`;
+        }
+
+        // Export payments PDF
+        function exportPaymentsPDF() {
+            const siteId = document.getElementById('paymentsSite').value;
+            const fortnightId = document.getElementById('paymentsFortnight').value;
+
+            if (!siteId || !fortnightId) {
+                showNotification('Please select site and fortnight first', 'error');
+                return;
+            }
+
+            showNotification('Exporting payments to PDF...', 'success');
+            // PDF export implementation would go here
         }
 
         // ======================
@@ -4325,7 +5780,7 @@
                 .filter(w => w.active)
                 .sort((a, b) => {
                     if (a.role !== b.role) return a.role.localeCompare(b.role);
-                    return a.surname.localeCompare(b.surname);
+                    return a.name.localeCompare(b.name);
                 })
                 .forEach(worker => {
                     const option = document.createElement('option');
@@ -4674,7 +6129,7 @@
             showNotification('Income added', 'success');
         }
 
-        // Load transactions
+        // Load transactions with edit/remove buttons
         function loadTransactions() {
             const typeFilter = document.getElementById('expenseTypeFilter').value;
             const periodFilter = document.getElementById('expensePeriodFilter').value;
@@ -4726,7 +6181,7 @@
             updateTransactionsSummary();
         }
 
-        // Render transactions list
+        // Render transactions list with edit/remove buttons
         function renderTransactionsList(transactions) {
             const container = document.getElementById('transactionsList');
 
@@ -4750,8 +6205,18 @@
                                     ${formatDate(transaction.date)} • ${transaction.category} • ${siteName}
                                 </div>
                             </div>
-                            <div style="font-weight: bold; color: ${transaction.type === 'income' ? 'var(--success)' : 'var(--danger)'};">
-                                ${transaction.type === 'income' ? '+' : '-'}R${transaction.amount.toLocaleString()}
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="font-weight: bold; color: ${transaction.type === 'income' ? 'var(--success)' : 'var(--danger)'};">
+                                    ${transaction.type === 'income' ? '+' : '-'}R${transaction.amount.toLocaleString()}
+                                </div>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-primary" onclick="editTransaction('${transaction.id}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteTransaction('${transaction.id}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4759,6 +6224,21 @@
             });
 
             container.innerHTML = html;
+        }
+
+        // Edit transaction (placeholder - you can implement this)
+        function editTransaction(transactionId) {
+            showNotification('Edit transaction feature coming soon', 'info');
+        }
+
+        // Delete transaction
+        function deleteTransaction(transactionId) {
+            if (!confirm('Delete this transaction?')) return;
+
+            appData.expenses = appData.expenses.filter(t => t.id !== transactionId);
+            saveData();
+            loadTransactions();
+            showNotification('Transaction deleted', 'success');
         }
 
         // Export transactions to Excel
@@ -5366,6 +6846,8 @@
                     appData = backupData;
                     saveData();
                     renderAll();
+                    updateFortnightSelectors();
+                    populateRatesTable();
 
                     hideModal('restoreModal');
                     showNotification('Data restored successfully', 'success');
