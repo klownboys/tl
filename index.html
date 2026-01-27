@@ -1622,7 +1622,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Surname</th>
-                            <th>ID Number</th>
+                            <th>WorkerID</th>
                             <th>Role</th>
                             <th>Daily Rate</th>
                             <th>Bank</th>
@@ -2375,7 +2375,7 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="workerId">ID Number *</label>
+                        <label for="workerId">WorkerID *</label>
                         <input type="text" id="workerId" required>
                     </div>
                     <div class="form-group">
@@ -3591,7 +3591,7 @@
             // Check for duplicate ID
             const duplicate = appData.workers.find(w => w.idNumber === idNumber);
             if (duplicate) {
-                showNotification('Worker with this ID number already exists', 'error');
+                showNotification('Worker with this WorkerID already exists', 'error');
                 return;
             }
 
@@ -3639,7 +3639,7 @@
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>ID Number *</label>
+                        <label>WorkerID *</label>
                         <input type="text" id="editWorkerId" value="${worker.idNumber}" required>
                     </div>
                     <div class="form-group">
@@ -3846,7 +3846,7 @@
             ]);
 
             const ws = XLSX.utils.aoa_to_sheet([
-                ['Name', 'Surname', 'ID Number', 'Phone', 'Role', 'Daily Rate', 'Bank', 'Account', 'Status'],
+                ['Name', 'Surname', 'WorkerID', 'Phone', 'Role', 'Daily Rate', 'Bank', 'Account', 'Status'],
                 ...data
             ]);
 
