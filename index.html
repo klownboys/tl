@@ -5107,46 +5107,45 @@
             updateDayWorksTotals();
         }
 
-        // Calculate day works row total
-        function calculateDayWorksRowTotal(rowData) {
-            // Get values from the row, default to 0 if empty
-            const bricklayer = parseFloat(rowData.bricklayer) || 0;
-            const labourers = parseFloat(rowData.labourers) || 0;
-            const foreman = parseFloat(rowData.foreman) || 0;
-            const transport = parseFloat(rowData.transport) || 0;
-            const hours = parseFloat(rowData.hours) || 0;
-            const overtime = parseFloat(rowData.overtime) || 0;
-            
-            // Calculate normal hours (total hours minus overtime)
-            const normalHours = Math.max(0, hours - overtime);
-            
-            // Calculate costs using current rates
-            const bricklayerCost = (bricklayer * normalHours * appData.dayWorksRates.bricklayer) + 
-                                  (bricklayer * overtime * appData.dayWorksRates.bricklayerOvertime);
-            
-            const labourersCost = (labourers * normalHours * appData.dayWorksRates.labour) + 
-                                 (labourers * overtime * appData.dayWorksRates.labourOvertime);
-            
-            const foremanCost = (foreman * normalHours * appData.dayWorksRates.foremen) + 
-                               (foreman * overtime * appData.dayWorksRates.foremenOvertime);
-            
-            const transportCost = transport * appData.dayWorksRates.transport;
-            
-            // Total cost
-            const total = bricklayerCost + labourersCost + foremanCost + transportCost;
-            
-            return {
-                total: Math.round(total * 100) / 100,
-                breakdown: {
-                    bricklayerCost: Math.round(bricklayerCost * 100) / 100,
-                    labourersCost: Math.round(labourersCost * 100) / 100,
-                    foremanCost: Math.round(foremanCost * 100) / 100,
-                    transportCost: Math.round(transportCost * 100) / 100,
-                    normalHours: normalHours,
-                    overtimeHours: overtime
-                }
-            };
+// Calculate day works row total - FIXED VERSION
+function calculateDayWorksRowTotal(rowData) {
+    // Get values from the row, default to 0 if empty
+    const bricklayer = parseFloat(rowData.bricklayer) || 0;
+    const labourers = parseFloat(rowData.labourers) || 0;
+    const foreman = parseFloat(rowData.foreman) || 0;
+    const transport = parseFloat(rowData.transport) || 0;
+    const hours = parseFloat(rowData.hours) || 0;
+    const overtime = parseFloat(rowData.overtime) || 0;
+    
+    // Calculate costs using current rates
+    // NORMAL HOURS: hours at normal rate
+    // OVERTIME HOURS: overtime at overtime rate
+    const bricklayerCost = (bricklayer * hours * appData.dayWorksRates.bricklayer) + 
+                          (bricklayer * overtime * appData.dayWorksRates.bricklayerOvertime);
+    
+    const labourersCost = (labourers * hours * appData.dayWorksRates.labour) + 
+                         (labourers * overtime * appData.dayWorksRates.labourOvertime);
+    
+    const foremanCost = (foreman * hours * appData.dayWorksRates.foremen) + 
+                       (foreman * overtime * appData.dayWorksRates.foremenOvertime);
+    
+    const transportCost = transport * appData.dayWorksRates.transport;
+    
+    // Total cost
+    const total = bricklayerCost + labourersCost + foremanCost + transportCost;
+    
+    return {
+        total: Math.round(total * 100) / 100,
+        breakdown: {
+            bricklayerCost: Math.round(bricklayerCost * 100) / 100,
+            labourersCost: Math.round(labourersCost * 100) / 100,
+            foremanCost: Math.round(foremanCost * 100) / 100,
+            transportCost: Math.round(transportCost * 100) / 100,
+            normalHours: hours,
+            overtimeHours: overtime
         }
+    };
+}
 
         // Handle day works input changes
         function handleDayWorksInputChange(event) {
