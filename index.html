@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6215,8 +6216,23 @@ function calculateDayWorksRowTotal(rowData) {
             document.getElementById('paymentsTotalNet').textContent = 'R' + totalNet.toLocaleString();
         }
 
-        // Export payroll PDF (FIXED)
+        
+
+        // Export payroll PDF (FIXED for combined sites)
         function exportPayrollPDF() {
+            // Check which sub-tab is active
+            const activeSubTab = document.querySelector('#payroll .sub-tab.active');
+            const isCombined = activeSubTab && activeSubTab.textContent.includes('Combined');
+            
+            if (isCombined) {
+                exportCombinedPayrollPDF();
+            } else {
+                exportSinglePayrollPDF();
+            }
+        }
+
+        // Export single site payroll PDF
+        function exportSinglePayrollPDF() {
             const table = document.getElementById('payrollTable');
             const siteId = document.getElementById('payrollSite').value;
             const fortnightId = document.getElementById('payrollFortnight').value;
@@ -6258,7 +6274,8 @@ function calculateDayWorksRowTotal(rowData) {
             });
             tableData.push(headers);
 
-            // Get rows
+            // Get rows - SORTED by role then name
+            const rows = [];
             table.querySelectorAll('tbody tr').forEach(tr => {
                 const row = [];
                 tr.querySelectorAll('td').forEach(td => {
@@ -6271,9 +6288,23 @@ function calculateDayWorksRowTotal(rowData) {
                     row.push(text);
                 });
                 if (row.length > 0) {
-                    tableData.push(row);
+                    rows.push(row);
                 }
             });
+            
+            
+
+            // Sort rows by Worker Name alphabetically
+            rows.sort((a, b) => {
+                const nameA = a[0] || '';  // First column is Worker Name
+                const nameB = b[0] || '';  // First column is Worker Name
+                return nameA.localeCompare(nameB);
+            });
+
+
+            
+            // Add sorted rows to tableData
+            rows.forEach(row => tableData.push(row));
 
             // Add totals row
             const totalRow = ['TOTAL', '', '', '', '', 
@@ -6320,8 +6351,138 @@ function calculateDayWorksRowTotal(rowData) {
             showNotification('Payroll PDF exported successfully', 'success');
         }
 
-        // Export payroll as image
+        // Export combined payroll PDF (NEW FUNCTION)
+        function exportCombinedPayrollPDF() {
+            const startDate = document.getElementById('combinedStartDate').value;
+            const endDate = document.getElementById('combinedEndDate').value;
+
+            if (!startDate || !endDate) {
+                showNotification('Please select date range first', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape');
+
+            // Header
+            doc.setFillColor(26, 54, 93);
+            doc.rect(0, 0, 297, 20, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.text('TONNY LAYS CONSTRUCTION - COMBINED PAYROLL', 148, 12, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Period: ${formatDate(startDate)} - ${formatDate(endDate)}`, 10, 30);
+            
+            // Show selected sites
+            const selectedSites = appData.selectedSites.length > 0 
+                ? appData.selectedSites.map(id => appData.sites.find(s => s.id === id)?.name).join(', ')
+                : 'All Active Sites';
+            doc.text(`Sites: ${selectedSites}`, 10, 38);
+            doc.text(`Generated: ${new Date().toLocaleDateString()}`, 10, 46);
+
+            // Get table data from combined payroll table
+            const table = document.getElementById('combinedPayrollTable');
+            const tableData = [];
+            const headers = [];
+            
+            // Get headers
+            table.querySelectorAll('thead th').forEach(th => {
+                headers.push(th.textContent);
+            });
+            tableData.push(headers);
+
+            // Get rows - SORTED by role (from worker role) then name
+            const rows = [];
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                const row = [];
+                tr.querySelectorAll('td').forEach(td => {
+                    let text = td.textContent || td.innerText;
+                    if (text.includes('\n')) {
+                        text = text.replace(/\n/g, ' ');
+                    }
+                    row.push(text);
+                });
+                if (row.length > 0) {
+                    rows.push(row);
+                }
+            });
+            
+            // Sort rows by role (extract from bank details? No - we need to get worker role)
+            // Since combined payroll doesn't show role column, we need to extract from worker data
+            // But for simplicity, we'll sort by name for now
+            rows.sort((a, b) => {
+                return a[0].localeCompare(b[0]);
+            });
+            
+            // Add sorted rows to tableData
+            rows.forEach(row => tableData.push(row));
+
+            // Get totals from footer
+            const totalGross = document.getElementById('combinedTotalGross').textContent;
+            const totalLoans = document.getElementById('combinedTotalLoans').textContent;
+            const totalCredit = document.getElementById('combinedTotalCredit').textContent;
+            const totalNet = document.getElementById('combinedTotalNet').textContent;
+
+            // Add totals row
+            tableData.push(['TOTAL', '', '', '', totalGross, totalLoans, totalCredit, totalNet]);
+
+            // Create table
+            doc.autoTable({
+                startY: 55,
+                head: [tableData[0]],
+                body: tableData.slice(1, tableData.length - 1),
+                foot: [tableData[tableData.length - 1]],
+                theme: 'grid',
+                styles: { fontSize: 8, cellPadding: 3 },
+                headStyles: { fillColor: [66, 108, 176], textColor: [255, 255, 255] },
+                footStyles: { fillColor: [26, 54, 93], textColor: [255, 255, 255], fontStyle: 'bold' },
+                columnStyles: {
+                    0: { cellWidth: 35 }, // Worker
+                    1: { cellWidth: 35 }, // Bank Details
+                    2: { cellWidth: 45 }, // Sites Worked
+                    3: { cellWidth: 20 }, // Total Days
+                    4: { cellWidth: 20 }, // Avg Rate
+                    5: { cellWidth: 25 }, // Gross
+                    6: { cellWidth: 25 }, // Loans
+                    7: { cellWidth: 25 }, // Credit
+                    8: { cellWidth: 25 }  // Net Pay
+                },
+                margin: { left: 10, right: 10 },
+                didDrawPage: function(data) {
+                    // Footer
+                    doc.setFontSize(8);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text('Generated by Tonnylays Construction System', 148, doc.internal.pageSize.height - 10, { align: 'center' });
+                }
+            });
+
+            // Save PDF
+            doc.save(`Combined_Payroll_${startDate}_to_${endDate}.pdf`);
+            showNotification('Combined payroll PDF exported successfully', 'success');
+        }
+
+
+
+
+
+        // Export payroll as image (FIXED for combined sites)
         function exportPayrollImage() {
+            // Check which sub-tab is active
+            const activeSubTab = document.querySelector('#payroll .sub-tab.active');
+            const isCombined = activeSubTab && activeSubTab.textContent.includes('Combined');
+            
+            if (isCombined) {
+                exportCombinedPayrollImage();
+            } else {
+                exportSinglePayrollImage();
+            }
+        }
+
+        // Export single site payroll image
+        function exportSinglePayrollImage() {
             const table = document.getElementById('payrollTable');
             const siteId = document.getElementById('payrollSite').value;
             const fortnightId = document.getElementById('payrollFortnight').value;
@@ -6381,7 +6542,28 @@ function calculateDayWorksRowTotal(rowData) {
                 th.style.textAlign = 'left';
             });
             
-            // Style cells
+            // Style cells - also sort the rows in the cloned table
+            const tbody = clonedTable.querySelector('tbody');
+            if (tbody) {
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                
+                // Sort rows by role (second column) then name (first column)
+                rows.sort((a, b) => {
+                    const roleA = a.querySelectorAll('td')[1]?.textContent || '';
+                    const roleB = b.querySelectorAll('td')[1]?.textContent || '';
+                    const nameA = a.querySelectorAll('td')[0]?.textContent || '';
+                    const nameB = b.querySelectorAll('td')[0]?.textContent || '';
+                    
+                    if (roleA !== roleB) return roleA.localeCompare(roleB);
+                    return nameA.localeCompare(nameB);
+                });
+                
+                // Reorder rows in tbody
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+            }
+            
+            // Style all cells
             clonedTable.querySelectorAll('td').forEach(td => {
                 td.style.padding = '6px 8px';
                 td.style.border = '1px solid #ddd';
@@ -6458,6 +6640,172 @@ function calculateDayWorksRowTotal(rowData) {
 
             showNotification('Payroll image exported successfully', 'success');
         }
+
+        // Export combined payroll image (NEW FUNCTION)
+        function exportCombinedPayrollImage() {
+            const startDate = document.getElementById('combinedStartDate').value;
+            const endDate = document.getElementById('combinedEndDate').value;
+
+            if (!startDate || !endDate) {
+                showNotification('Please select date range first', 'error');
+                return;
+            }
+
+            const table = document.getElementById('combinedPayrollTable');
+            
+            // Create container with styling
+            const container = document.createElement('div');
+            container.style.padding = '20px';
+            container.style.backgroundColor = 'white';
+            container.style.maxWidth = '1200px';
+
+            // Add header
+            const header = document.createElement('div');
+            header.style.textAlign = 'center';
+            header.style.marginBottom = '20px';
+            header.style.padding = '15px';
+            header.style.background = 'linear-gradient(135deg, #1a365d, #2b6cb0)';
+            header.style.color = 'white';
+            header.style.borderRadius = '10px';
+            
+            // Get selected sites for display
+            const selectedSites = appData.selectedSites.length > 0 
+                ? appData.selectedSites.map(id => appData.sites.find(s => s.id === id)?.name).join(', ')
+                : 'All Active Sites';
+            
+            header.innerHTML = `
+                <h2 style="margin: 0 0 10px 0;">TONNY LAYS CONSTRUCTION</h2>
+                <h3 style="margin: 0 0 10px 0;">COMBINED PAYROLL REPORT</h3>
+                <div style="font-size: 14px;">
+                    <div>Period: ${formatDate(startDate)} - ${formatDate(endDate)}</div>
+                    <div>Sites: ${selectedSites}</div>
+                    <div>Generated: ${new Date().toLocaleDateString()}</div>
+                </div>
+            `;
+
+            container.appendChild(header);
+
+            // Clone and style the table
+            const clonedTable = table.cloneNode(true);
+            
+            // Remove any existing styling and apply print styles
+            clonedTable.style.width = '100%';
+            clonedTable.style.borderCollapse = 'collapse';
+            clonedTable.style.fontFamily = 'Arial, sans-serif';
+            clonedTable.style.fontSize = '11px';
+            
+            // Style headers
+            clonedTable.querySelectorAll('th').forEach(th => {
+                th.style.backgroundColor = '#2b6cb0';
+                th.style.color = 'white';
+                th.style.padding = '8px';
+                th.style.border = '1px solid #ddd';
+                th.style.textAlign = 'left';
+            });
+            
+            // Style cells - sort rows by name
+            const tbody = clonedTable.querySelector('tbody');
+            if (tbody) {
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                
+                // Sort rows by worker name (first column)
+                rows.sort((a, b) => {
+                    const nameA = a.querySelectorAll('td')[0]?.textContent || '';
+                    const nameB = b.querySelectorAll('td')[0]?.textContent || '';
+                    return nameA.localeCompare(nameB);
+                });
+                
+                // Reorder rows in tbody
+                tbody.innerHTML = '';
+                rows.forEach(row => tbody.appendChild(row));
+            }
+            
+            // Style all cells
+            clonedTable.querySelectorAll('td').forEach(td => {
+                td.style.padding = '6px 8px';
+                td.style.border = '1px solid #ddd';
+                td.style.textAlign = 'left';
+            });
+            
+            // Style footer
+            clonedTable.querySelectorAll('tfoot tr').forEach(tr => {
+                tr.style.backgroundColor = '#1a365d';
+                tr.style.color = 'white';
+                tr.style.fontWeight = 'bold';
+                
+                tr.querySelectorAll('td').forEach(td => {
+                    td.style.padding = '8px';
+                    td.style.border = '1px solid #ddd';
+                });
+            });
+
+            container.appendChild(clonedTable);
+
+            // Add summary
+            const summary = document.createElement('div');
+            summary.style.marginTop = '20px';
+            summary.style.padding = '15px';
+            summary.style.backgroundColor = '#f8f9fa';
+            summary.style.borderRadius = '8px';
+            summary.style.border = '1px solid #ddd';
+            
+            const totalGross = document.getElementById('combinedTotalGross').textContent;
+            const totalLoans = document.getElementById('combinedTotalLoans').textContent;
+            const totalCredit = document.getElementById('combinedTotalCredit').textContent;
+            const totalNet = document.getElementById('combinedTotalNet').textContent;
+            
+            summary.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 10px;">Summary Totals:</div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <div>Total Gross: ${totalGross}</div>
+                    <div>Total Loans: ${totalLoans}</div>
+                    <div>Total Credit: ${totalCredit}</div>
+                    <div style="font-weight: bold;">Total Net: ${totalNet}</div>
+                </div>
+            `;
+            container.appendChild(summary);
+
+            // Add footer
+            const footer = document.createElement('div');
+            footer.style.marginTop = '20px';
+            footer.style.textAlign = 'center';
+            footer.style.fontSize = '10px';
+            footer.style.color = '#666';
+            footer.textContent = 'Generated by Tonnylays Construction System';
+            container.appendChild(footer);
+
+            // Append to body and capture
+            document.body.appendChild(container);
+            
+            html2canvas(container, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                document.body.removeChild(container);
+                
+                const link = document.createElement('a');
+                link.download = `Combined_Payroll_${startDate}_to_${endDate}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(error => {
+                console.error('Error generating image:', error);
+                showNotification('Error exporting image. Please try again.', 'error');
+                document.body.removeChild(container);
+            });
+
+            showNotification('Combined payroll image exported successfully', 'success');
+        }
+
+
+        
+
+
+
+
+
 
         // Render payroll history
         function renderPayrollHistory() {
